@@ -74,7 +74,6 @@ class BasePlugin:
     def onStart(self):
         if fake:
             from fakeDomoticz import Devices
-        Domoticz.Debugging(self.debugging)
 
         if bluepyError == 1:
             Domoticz.Error("Error loading Parrot Flower libraries")
@@ -120,6 +119,7 @@ class BasePlugin:
                 self.debugging = 1
         except:
             Domoticz.Error("Invalid debug parameter")
+        Domoticz.Debugging(self.debugging)
 
     def onStop(self):
         Domoticz.Log("onStop called")

@@ -35,6 +35,7 @@ def Error(s):
 def Debugging(val):
     global DEBUG
     if val == 1:
+        print('Debugging on')
         DEBUG = True
 
 
