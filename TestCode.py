@@ -11,6 +11,7 @@ Parameters['Mode3'] = u"bluepy"
 Parameters['Mode4'] = u"60"
 Parameters['Mode5'] = u"Debug"
 
+
 def runtest(plugin):
 
     fakeDomoticz.Start()

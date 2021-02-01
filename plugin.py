@@ -59,6 +59,7 @@ try:
 except:
     bluepyError = 1
 
+
 class BasePlugin:
 
     def __init__(self):
@@ -69,7 +70,6 @@ class BasePlugin:
         self.pollinterval = 60  # default polling interval in minutes
         self.debugging = 0
         return
-
 
     def onStart(self):
         if fake:
@@ -89,7 +89,7 @@ class BasePlugin:
             Domoticz.Log("Manual mode is selected")
             self.macs = parseCSV(Parameters["Mode2"])
             self.createSensors()
-        #Domoticz.Log("macs = {}".format(self.macs))
+        # Domoticz.Log("macs = {}".format(self.macs))
 
         # get the backend
         if Parameters["Mode3"] == 'gatttool':
@@ -121,22 +121,17 @@ class BasePlugin:
         except:
             Domoticz.Error("Invalid debug parameter")
 
-
     def onStop(self):
         Domoticz.Log("onStop called")
-
 
     def onConnect(self, Connection, Status, Description):
         Domoticz.Log("onConnect called")
 
-
     def onMessage(self, Connection, Data, Status, Extra):
         Domoticz.Log("onMessage called")
 
-
     def onCommand(self, Unit, Command, Level, Hue):
         Domoticz.Log("onCommand called for Unit " + str(Unit) + ": Parameter '" + str(Command) + "', Level: " + str(Level))
-
 
     def onHeartbeat(self):
         if fake:
@@ -144,7 +139,7 @@ class BasePlugin:
         now = datetime.now()
         if now >= self.nextupdate:
             self.nextupdate = now + timedelta(minutes=self.pollinterval)
-            #By setting this to 0, the polling function will run.
+            # By setting this to 0, the polling function will run.
             self.currentlyPolling = 0
 
         # for now this uses the shelve database as its source of truth.
@@ -154,7 +149,6 @@ class BasePlugin:
             except:
                 Domoticz.Error("Can't get data from sensor " + str(self.macs[self.currentlyPolling]))
             self.currentlyPolling = self.currentlyPolling + 1
-
 
     # function to create corresponding sensors in Domoticz if there are Parrot Flower which don't have them yet.
     def createSensors(self):
@@ -171,7 +165,7 @@ class BasePlugin:
                 sensorNumber = (idx * 5) + 1
                 if sensorNumber not in Devices:
 
-                    #moisture
+                    # moisture
                     sensorName = sensorBaseName + "Moisture"
                     Domoticz.Debug("Creating first sensor, #" + str(sensorNumber))
                     Domoticz.Debug("Creating first sensor, name: " + str(sensorName))
@@ -180,25 +174,25 @@ class BasePlugin:
                         print('---- sensorNumber: ', sensorNumber, sensorName)
                     Domoticz.Log("Created device: " + sensorName)
 
-                    #air temperature
+                    # air temperature
                     sensorNumber = (idx * 5) + 2
                     sensorName = sensorBaseName + "Air Temperature"
                     Domoticz.Device(Name=sensorName, Unit=sensorNumber, TypeName="Temperature", Used=1).Create()
                     Domoticz.Log("Created device: " + sensorName)
 
-                    #light
+                    # light
                     sensorNumber = (idx * 5) + 3
                     sensorName = sensorBaseName + "Light"
                     Domoticz.Device(Name=sensorName, Unit=sensorNumber, TypeName="Illumination", Used=1).Create()
                     Domoticz.Log("Created device: " + sensorName)
 
-                    #fertility
+                    # fertility
                     sensorNumber = (idx * 5) + 4
                     sensorName = sensorBaseName + "Conductivity"
                     Domoticz.Device(Name=sensorName, Unit=sensorNumber, TypeName="Custom", Used=1).Create()
                     Domoticz.Log("Created device: " + sensorName)
 
-                    #soil temperature
+                    # soil temperature
                     sensorNumber = (idx * 5) + 5
                     sensorName = sensorBaseName + "Soil Temperature"
                     Domoticz.Device(Name=sensorName, Unit=sensorNumber, TypeName="Temperature", Used=1).Create()
@@ -208,39 +202,39 @@ class BasePlugin:
     def getPlantData(self, idx):
         if fake:
             from fakeDomoticz import Devices
-        #for idx, mac in enumerate(self.macs):
+        # for idx, mac in enumerate(self.macs):
         mac = self.macs[idx]
         Domoticz.Log("Getting data from sensor: " + str(mac))
         poller = ParrotFlowerPoller(str(mac), self.backend)
 
-        val_bat  = int("{}".format(poller.parameter_value(P_BATTERY)))
+        val_bat = int("{}".format(poller.parameter_value(P_BATTERY)))
         nValue = 0
 
-        #moisture
+        # moisture
         sensorNumber1 = (idx * 5) + 1
         val_moist = "{}".format(poller.parameter_value(P_MOISTURE))
         Devices[sensorNumber1].Update(nValue=nValue, sValue=val_moist, BatteryLevel=val_bat)
         Domoticz.Log("moisture = " + str(val_moist))
 
-        #air temperature
+        # air temperature
         sensorNumber2 = (idx * 5) + 2
         val_air_temp = "{}".format(poller.parameter_value(P_AIR_TEMPERATURE))
         Devices[sensorNumber2].Update(nValue=nValue, sValue=val_air_temp, BatteryLevel=val_bat)
         Domoticz.Log("air temperature = " + str(val_air_temp))
 
-        #light
+        # light
         sensorNumber3 = (idx * 5) + 3
         val_lux = "{}".format(poller.parameter_value(P_LIGHT) * 54)
         Devices[sensorNumber3].Update(nValue=nValue, sValue=val_lux, BatteryLevel=val_bat)
         Domoticz.Log("light = " + str(val_lux))
 
-        #fertility
+        # fertility
         sensorNumber4 = (idx * 5) + 4
         val_cond = "{}".format(poller.parameter_value(P_CONDUCTIVITY))
         Devices[sensorNumber4].Update(nValue=nValue, sValue=val_cond, BatteryLevel=val_bat)
         Domoticz.Log("conductivity = " + str(val_cond))
 
-        #soil temperature
+        # soil temperature
         sensorNumber5 = (idx * 5) + 5
         val_soil_temp = "{}".format(poller.parameter_value(P_SOIL_TEMPERATURE))
         Devices[sensorNumber5].Update(nValue=nValue, sValue=val_soil_temp, BatteryLevel=val_bat)
@@ -252,7 +246,7 @@ class BasePlugin:
             from fakeDomoticz import Devices
         Domoticz.Log("Scanning for Parrot Flower Power & Pot sensors")
 
-        #databaseFile=os.path.join(os.environ['HOME'],'ParrotFlower')
+        # databaseFile=os.path.join(os.environ['HOME'],'ParrotFlower')
         # first, let's get the list of devices we already know about
         database = shelve.open('ParrotFlower')
 
@@ -264,10 +258,10 @@ class BasePlugin:
         except:
             knownSensors = []
             database['macs'] = knownSensors
-            oldLength = 0;
+            oldLength = 0
             Domoticz.Debug("No existing sensors in system?")
 
-        #Next we scan to look for new sensors
+        # Next we scan to look for new sensors
         try:
             foundParrots = parrot_flower_scanner.scan(self.backend, 5)
             Domoticz.Log("Number of devices found via bluetooth scan = " + str(len(foundParrots)))
