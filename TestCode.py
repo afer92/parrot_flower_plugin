@@ -3,6 +3,7 @@ import fakeDomoticz
 from fakeDomoticz import Device
 from fakeDomoticz import Devices
 from fakeDomoticz import Images
+from plugin import BasePlugin
 
 Parameters = {}
 Parameters['Mode1'] = u"Manual selection (add below)"
@@ -12,11 +13,11 @@ Parameters['Mode4'] = u"60"
 Parameters['Mode5'] = u"Debug"
 
 
-def runtest(plugin):
+def runtest():
 
     fakeDomoticz.Start()
-    fakeDomoticz.Debugging(0)
 
+    plugin = BasePlugin()
     plugin.onStart()
     # plugin.onCommand(1, '', '', '')
     plugin.onHeartbeat()

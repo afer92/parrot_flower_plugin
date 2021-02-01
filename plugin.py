@@ -37,7 +37,8 @@ try:
 except ImportError:
     import fakeDomoticz as Domoticz
     import fakeDomoticz
-    from fakeDomoticz import Devices
+    from fakeDomoticz import Devices 
+    # from TestCode import Parameters
     Devices = fakeDomoticz.Devices
     fake = True
 import time
@@ -73,10 +74,19 @@ class BasePlugin:
 
     def onStart(self):
         if fake:
-            from fakeDomoticz import Devices
+            from fakeDomoticz import Devices 
+            from TestCode import Parameters
 
         if bluepyError == 1:
             Domoticz.Error("Error loading Parrot Flower libraries")
+
+        # check polling interval parameter
+        try:
+            if Parameters["Mode5"] == 'Debug':
+                self.debugging = 1
+        except:
+            Domoticz.Error("Invalid debug parameter")
+        Domoticz.Debugging(self.debugging)
 
         Domoticz.Debug("Parrot Flower - devices made so far (max 255): " + str(len(Devices)))
 
@@ -113,14 +123,6 @@ class BasePlugin:
             self.pollinterval = temp
         Domoticz.Log("Using polling interval of {} minutes".format(str(self.pollinterval)))
 
-        # check polling interval parameter
-        try:
-            if Parameters["Mode5"] == 'Debug':
-                self.debugging = 1
-        except:
-            Domoticz.Error("Invalid debug parameter")
-        Domoticz.Debugging(self.debugging)
-
     def onStop(self):
         Domoticz.Log("onStop called")
 
@@ -136,6 +138,8 @@ class BasePlugin:
     def onHeartbeat(self):
         if fake:
             from fakeDomoticz import Devices
+            from TestCode import Parameters
+
         now = datetime.now()
         if now >= self.nextupdate:
             self.nextupdate = now + timedelta(minutes=self.pollinterval)
@@ -154,6 +158,7 @@ class BasePlugin:
     def createSensors(self):
         if fake:
             from fakeDomoticz import Devices
+            from TestCode import Parameters
         # create the domoticz sensors if necessary
         if (len(Devices) / 5) < len(self.macs):
             Domoticz.Debug("Creating new sensors")
@@ -202,6 +207,7 @@ class BasePlugin:
     def getPlantData(self, idx):
         if fake:
             from fakeDomoticz import Devices
+            from TestCode import Parameters
         # for idx, mac in enumerate(self.macs):
         mac = self.macs[idx]
         Domoticz.Log("Getting data from sensor: " + str(mac))
@@ -244,6 +250,7 @@ class BasePlugin:
     def floraScan(self):
         if fake:
             from fakeDomoticz import Devices
+            from TestCode import Parameters
         Domoticz.Log("Scanning for Parrot Flower Power & Pot sensors")
 
         # databaseFile=os.path.join(os.environ['HOME'],'ParrotFlower')
@@ -321,9 +328,10 @@ if __name__ == "__main__":
     from fakeDomoticz import Devices
     import fakeDomoticz
     from TestCode import runtest
-    from TestCode import Parameters
+    import TestCode
 
     Devices = fakeDomoticz.Devices
+    Parameters = TestCode.Parameters
 
-    runtest(_plugin)
+    runtest()
     exit(0)

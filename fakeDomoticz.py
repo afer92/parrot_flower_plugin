@@ -26,6 +26,8 @@ def Log(s):
 def Debug(s):
     if DEBUG:
         print(s)
+    else:
+        print('----', s)
 
 
 def Error(s):
