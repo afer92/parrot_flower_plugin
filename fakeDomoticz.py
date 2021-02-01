@@ -20,18 +20,16 @@ DEBUG = False
 
 
 def Log(s):
-    print(s)
+    print('Log: ', s)
 
 
 def Debug(s):
     if DEBUG:
-        print(s)
-    else:
-        print('----', s)
+        print('Debug: ', s)
 
 
 def Error(s):
-    print(s)
+    print('Error: ', s)
 
 
 def Debugging(val):
